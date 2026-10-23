@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Product catalog lives in src/lib/products.ts and the cart is client-side (localStorage) via src/lib/cart.tsx; replace both if a real store backend (e.g. Shopify) is connected.
