@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { categories, products, type Category } from "@/lib/products";
-import { ProductCard } from "@/components/ProductCard";
+import { useQuery } from "@tanstack/react-query";
+import { categories, productsQuery, type Category } from "@/lib/products";
+import { ProductCard, ProductGridSkeleton } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/shop")({
   validateSearch: (s: Record<string, unknown>): { category?: Category } => {
@@ -20,7 +21,9 @@ export const Route = createFileRoute("/shop")({
 
 function Shop() {
   const { category } = Route.useSearch();
-  const list = category ? products.filter((p) => p.category === category) : products;
+  const { data } = useQuery(productsQuery);
+  const active = data?.filter((p) => p.is_active);
+  const list = active && category ? active.filter((p) => p.category === category) : active;
   const tab = (active: boolean) => `eyebrow pb-1 ${active ? "link-underline text-foreground" : "text-muted-foreground hover:text-foreground"}`;
   return (
     <div className="mx-auto max-w-7xl px-6 py-20">
@@ -32,7 +35,8 @@ function Shop() {
         ))}
       </div>
       <div className="mt-16 grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
-        {list.map((p) => <ProductCard key={p.slug} p={p} />)}
+        {list ? list.map((p) => <ProductCard key={p.id} p={p} />) : <ProductGridSkeleton n={6} />}
+        {list && !list.length && <p className="col-span-full text-center text-muted-foreground">No pieces here yet.</p>}
       </div>
     </div>
   );

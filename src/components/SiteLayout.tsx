@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, User } from "lucide-react";
 import { useCart } from "@/lib/cart";
+import { useAuth } from "@/lib/auth";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { count } = useCart();
+  const { user, isAdmin } = useAuth();
   return (
     <div className="min-h-screen flex flex-col">
       <div className="bg-foreground text-background text-center eyebrow py-2">Complimentary shipping & gift wrapping</div>
@@ -16,10 +18,16 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <Link to="/maison" className="hidden md:inline hover:text-primary">Maison</Link>
           </nav>
           <Link to="/" className="justify-self-center font-display text-3xl tracking-[0.35em]">ALNORA</Link>
-          <Link to="/cart" className="justify-self-end flex items-center gap-2 eyebrow hover:text-primary" aria-label="Shopping bag">
-            <ShoppingBag className="h-4 w-4" strokeWidth={1.25} />
-            <span>({count})</span>
-          </Link>
+          <div className="justify-self-end flex items-center gap-6 eyebrow">
+            {isAdmin && <Link to="/admin" className="hidden md:inline hover:text-primary">Admin</Link>}
+            <Link to={user ? "/account" : "/auth"} className="flex items-center gap-2 hover:text-primary" aria-label={user ? "My account" : "Sign in"}>
+              <User className="h-4 w-4" strokeWidth={1.25} /><span className="hidden md:inline">{user ? "Account" : "Sign in"}</span>
+            </Link>
+            <Link to="/cart" className="flex items-center gap-2 hover:text-primary" aria-label="Shopping bag">
+              <ShoppingBag className="h-4 w-4" strokeWidth={1.25} />
+              <span>({count})</span>
+            </Link>
+          </div>
         </div>
       </header>
       <main className="flex-1">{children}</main>

@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero.jpg";
-import { categories, products } from "@/lib/products";
-import { ProductCard } from "@/components/ProductCard";
+import { useQuery } from "@tanstack/react-query";
+import { categories, productsQuery } from "@/lib/products";
+import { ProductCard, ProductGridSkeleton } from "@/components/ProductCard";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const { data: products } = useQuery(productsQuery);
   return (
     <>
       <section className="relative h-[85vh] min-h-[560px] overflow-hidden">
@@ -54,7 +56,7 @@ function Index() {
             <h2 className="mt-3 text-4xl">The Signatures</h2>
           </div>
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            {products.slice(0, 3).map((p) => <ProductCard key={p.slug} p={p} />)}
+            {products ? products.filter((p) => p.is_active).slice(0, 3).map((p) => <ProductCard key={p.id} p={p} />) : <ProductGridSkeleton />}
           </div>
           <div className="text-center mt-14"><Link to="/shop" className="btn-outline-luxe">View all</Link></div>
         </div>
